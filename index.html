@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pawnym — подбор клички для собаки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF5EC; --surface:#FFFFFF; --surface-2:#F4EBDD; --ink:#2A1F17; --ink-2:#6B5B4E; --line:#E8DCCB;
+  --accent:#D9573A; --accent-ink:#FFFFFF; --accent-soft:#FBE3DA; --sage:#6F8F72; --sage-soft:#E3ECDF;
+  --gold:#C99A2E; --shadow:0 1px 2px rgba(42,31,23,.06),0 8px 24px -12px rgba(42,31,23,.18);
+  --r:18px; --r-sm:12px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#1B1612; --surface:#26201A; --surface-2:#2F2821; --ink:#F6EDE2; --ink-2:#B8A796; --line:#3A3129;
+  --accent:#F0795A; --accent-ink:#1B1612; --accent-soft:#3F2A22; --sage:#9DBB9F; --sage-soft:#26332A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
+}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:84px}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:0 18px}
+header.top{display:flex;align-items:center;justify-content:space-between;padding:20px 0 8px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:38px;height:38px}
+.brand b{font:900 26px/1 Nunito,sans-serif;letter-spacing:-.5px}
+.brand small{display:block;color:var(--ink-2);font-size:12.5px;font-weight:500;margin-top:3px}
+.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:999px}
+.tab{border:0;background:transparent;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:600;color:var(--ink-2);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.tab[aria-selected=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.tab .ico{font-size:16px}
+.badge{background:var(--accent);color:var(--accent-ink);border-radius:999px;font-size:11px;padding:0 6px;min-width:18px;text-align:center;line-height:18px}
+@media (max-width:720px){
+  .tabs{position:fixed;left:10px;right:10px;bottom:10px;z-index:20;justify-content:space-around;box-shadow:var(--shadow);background:var(--surface)}
+  .tab{flex-direction:column;gap:1px;font-size:11px;padding:6px 8px;flex:1}
+  .tab[aria-selected=true]{background:var(--accent-soft);box-shadow:none}
+  .tab .ico{font-size:19px}
+  .tab .badge{position:absolute;margin:-4px 0 0 22px}
+  .brand small{display:none}
+}
+.view{display:none;padding:12px 0 24px}
+.view.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{font:900 clamp(28px,5vw,44px)/1.05 Nunito,sans-serif;letter-spacing:-1px;margin:10px 0 6px}
+.hero em{font-style:normal;color:var(--accent)}
+.lead{color:var(--ink-2);margin:0 0 18px;max-width:560px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+@media (max-width:720px){.filters{grid-template-columns:1fr}}
+.field label,.lbl{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-bottom:6px}
+.seg{display:flex;background:var(--surface-2);border-radius:var(--r-sm);padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;padding:8px 6px;border-radius:9px;cursor:pointer;font-weight:600;color:var(--ink-2);font-size:14px}
+.seg button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+select,input[type=text]{width:100%;background:var(--surface-2);border:1px solid transparent;border-radius:var(--r-sm);padding:10px 12px;outline:none}
+select:focus,input[type=text]:focus{border-color:var(--accent);background:var(--surface)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pools-line{margin-top:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;color:var(--ink-2)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:var(--surface-2);font-size:12.5px;font-weight:600;color:var(--ink)}
+.chip.origin{background:var(--sage-soft);color:var(--sage)}
+.chip.main{background:var(--accent-soft);color:var(--accent)}
+.cta{border:0;background:var(--accent);color:var(--accent-ink);font:800 17px Nunito,sans-serif;padding:14px 22px;border-radius:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 6px 18px -8px var(--accent);transition:transform .12s}
+.cta:active{transform:scale(.97)}
+.ghost{border:1px solid var(--line);background:var(--surface);padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:600}
+.ghost:hover{border-color:var(--ink-2)}
+.actions{display:flex;gap:10px;margin-top:16px;align-items:center;flex-wrap:wrap}
+.hint{font-size:12.5px;color:var(--ink-2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-top:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 16px 12px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow);animation:pop .35s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.card .name{font:900 28px/1.1 Nunito,sans-serif;letter-spacing:-.5px;word-break:break-word}
+.card .short{font-size:13.5px;color:var(--ink-2)}
+.card .short b{color:var(--ink);font-weight:700;background:var(--surface-2);padding:1px 8px;border-radius:999px}
+.card .mean{font-size:13.5px;color:var(--ink-2);font-style:italic;min-height:1em}
+.card .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;border-top:1px dashed var(--line)}
+.card .tags{display:flex;gap:5px;flex-wrap:wrap}
+.icons{display:flex;gap:2px}
+.icon{border:0;background:transparent;width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:18px;display:grid;place-items:center;color:var(--ink-2)}
+.icon:hover{background:var(--surface-2)}
+.icon.liked{color:var(--accent)}
+.icon svg{width:20px;height:20px}
+.empty{text-align:center;padding:40px 16px;color:var(--ink-2)}
+.empty .big{font-size:44px}
+.fav-list{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.fav{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.fav .n{font:800 19px Nunito,sans-serif}
+.fav .s{color:var(--ink-2);font-size:13px}
+.fav .grow{flex:1;min-width:0}
+.settings{display:grid;gap:14px}
+.set{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.set .t{font-weight:700}
+.set .d{font-size:13px;color:var(--ink-2)}
+.switch{position:relative;width:46px;height:28px;flex:none}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch span{position:absolute;inset:0;background:var(--line);border-radius:999px;transition:.2s;cursor:pointer}
+.switch span::after{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch input:checked+span{background:var(--sage)}
+.switch input:checked+span::after{transform:translateX(18px)}
+.switch input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.poolpick{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.poolpick button{border:1px solid var(--line);background:var(--surface);padding:6px 11px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13px}
+.poolpick button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.poolpick[aria-disabled=true]{opacity:.45;pointer-events:none}
+hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--surface-2);border-radius:12px;padding:10px}
+.stat b{display:block;font:900 22px Nunito,sans-serif}
+.stat span{font-size:12px;color:var(--ink-2)}
+@media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}}
+.sh-out{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.sh-out button{border:0;background:var(--accent-soft);color:var(--accent);font:800 18px Nunito,sans-serif;padding:8px 14px;border-radius:12px;cursor:pointer}
+.sh-out button.db{background:var(--sage-soft);color:var(--sage)}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:50}
+.toast.on{opacity:1;transform:translateX(-50%)}
+footer{color:var(--ink-2);font-size:12px;text-align:center;padding:10px 0 20px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="14" fill="var(--accent)"/><g fill="var(--accent-ink)"><ellipse cx="24" cy="30" rx="8.5" ry="7"/><ellipse cx="13.5" cy="21" rx="3.6" ry="4.6" transform="rotate(-18 13.5 21)"/><ellipse cx="20" cy="14.5" rx="3.6" ry="4.8"/><ellipse cx="28" cy="14.5" rx="3.6" ry="4.8"/><ellipse cx="34.5" cy="21" rx="3.6" ry="4.6" transform="rotate(18 34.5 21)"/></g></svg>
+      <div><b>Pawnym</b><small data-t="tagline"></small></div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-view="pick"><span class="ico">✨</span><span data-t="tabPick"></span></button>
+      <button class="tab" role="tab" data-view="fav"><span class="ico">♥</span><span data-t="tabFav"></span><span class="badge" id="favCount" hidden></span></button>
+      <button class="tab" role="tab" data-view="short"><span class="ico">✂️</span><span data-t="tabShort"></span></button>
+      <button class="tab" role="tab" data-view="settings"><span class="ico">⚙️</span><span data-t="tabSettings"></span></button>
+    </nav>
+  </header>
+
+  <!-- ПОДБОР -->
+  <section class="view" id="view-pick">
+    <h1 class="hero" data-t="hero" data-html></h1>
+    <p class="lead" data-t="lead"></p>
+    <div class="panel">
+      <div class="filters">
+        <div class="field"><span class="lbl" data-t="gender"></span>
+          <div class="seg" id="segGender">
+            <button data-v="any" data-t="any"></button><button data-v="m" data-t="male"></button><button data-v="f" data-t="female"></button>
+          </div></div>
+        <div class="field"><span class="lbl" data-t="size"></span>
+          <div class="seg" id="segSize">
+            <button data-v="any" data-t="any"></button><button data-v="s" data-t="small"></button><button data-v="m" data-t="medium"></button><button data-v="l" data-t="large"></button>
+          </div></div>
+        <div class="field"><label for="breed" data-t="breed"></label><select id="breed"></select></div>
+        <div class="field"><label for="letter" data-t="letter"></label><input type="text" id="letter" maxlength="1" autocomplete="off"></div>
+      </div>
+      <div class="pools-line" id="poolsLine"></div>
+      <div class="actions">
+        <button class="cta" id="btnGen"><span>🐾</span><span data-t="generate"></span></button>
+        <span class="hint" id="genHint"></span>
+      </div>
+    </div>
+    <div class="grid" id="results" aria-live="polite"></div>
+  </section>
+
+  <!-- ИЗБРАННОЕ -->
+  <section class="view" id="view-fav">
+    <h1 class="hero" data-t="favTitle"></h1>
+    <div class="row"><button class="ghost" id="btnCopyAll" data-t="copyAll"></button><button class="ghost" id="btnClearFav" data-t="clearFav"></button></div>
+    <div class="fav-list" id="favList"></div>
+  </section>
+
+  <!-- СОКРАЩАЛКА -->
+  <section class="view" id="view-short">
+    <h1 class="hero" data-t="shortTitle"></h1>
+    <p class="lead" data-t="shortLead"></p>
+    <div class="panel">
+      <label class="lbl" for="shortIn" data-t="fullName"></label>
+      <input type="text" id="shortIn" autocomplete="off">
+      <div class="sh-out" id="shortOut"></div>
+    </div>
+  </section>
+
+  <!-- НАСТРОЙКИ -->
+  <section class="view" id="view-settings">
+    <h1 class="hero" data-t="tabSettings"></h1>
+    <div class="panel settings">
+      <div class="field"><label for="uiLang" data-t="uiLang"></label><select id="uiLang"></select></div>
+      <div class="field"><label for="nameLang" data-t="nameLang"></label><select id="nameLang"></select>
+        <div class="hint" data-t="nameLangHint" style="margin-top:6px"></div></div>
+      <hr class="sep">
+      <div class="set"><div><div class="t" data-t="exotic"></div><div class="d" data-t="exoticHint"></div></div>
+        <label class="switch"><input type="checkbox" id="optExotic"><span></span></label></div>
+      <div class="poolpick" id="poolPick"></div>
+      <hr class="sep">
+      <div class="set"><div><div class="t" data-t="origin"></div><div class="d" data-t="originHint"></div></div>
+        <label class="switch"><input type="checkbox" id="optOrigin"><span></span></label></div>
+      <div class="set"><div><div class="t" data-t="meanings"></div></div>
+        <label class="switch"><input type="checkbox" id="optMean"><span></span></label></div>
+      <hr class="sep">
+      <div><span class="lbl" data-t="stats"></span>
+        <div class="stats" id="stats"></div></div>
+    </div>
+  </section>
+  <footer id="foot"></footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+// Pawnym — база кличек. Формат строки:
+// Полное|Короткое|пол(m/f/u)|размеры(s,m,l; пусто = любой)|значение_ru~meaning_en
+const NAME_POOLS = {
+ru: `Барон|Барик|m|ml|титул знати~baron
+Бим||m|sm
+Тузик|Туз|m|s
+Шарик||m|sm|шарик~little ball
+Дружок||m|sm|друг~buddy
+Полкан|Полкаша|m|l|богатырь из сказок~fairy-tale strongman
+Буран||m|l|снежная буря~blizzard
+Гром||m|l|гром~thunder
+Байкал||m|l|озеро Байкал~Lake Baikal
+Амур||m|ml|река Амур~Amur river
+Кузьма|Кузя|m|s
+Тимофей|Тимоха|m|
+Степан|Стёпа|m|
+Пират||m|m|пират~pirate
+Граф||m|l|граф~count
+Казбек||m|l|гора на Кавказе~Caucasus peak
+Мухтар||m|l
+Джульбарс|Джуля|m|l
+Атаман||m|l|предводитель~chieftain
+Витязь||m|l|храбрый воин~valiant knight
+Богатырь|Батя|m|l|былинный силач~epic hero
+Ураган|Ураша|m|ml|ураган~hurricane
+Пушок||m|s|пушистый~fluffy
+Уголёк|Уголь|m|sm|маленький уголёк~little ember
+Бублик||m|s|бублик~bagel
+Пончик||m|s|пончик~donut
+Кекс||m|s|кекс~cupcake
+Сухарик||m|s|сухарик~rusk
+Пельмень|Пеля|m|s|пельмень~dumpling
+Антон|Антошка|m|
+Фёдор|Федя|m|
+Фунтик||m|s
+Филимон|Филя|m|
+Чижик||m|s|птица чиж~siskin
+Шустрик||m|s|шустрый~zippy
+Ветер|Ветерок|m|ml|ветер~wind
+Туман||m|ml|туман~fog
+Север||m|l|север~north
+Буян||m|l|озорник~rowdy
+Борис|Боря|m|
+Ермак||m|l|покоритель Сибири~Siberia's conqueror
+Тихон|Тиша|m||тихий~quiet one
+Прохор|Проша|m|
+Семён|Сёма|m|
+Аркадий|Аркаша|m|
+Василий|Вася|m||царственный~royal
+Мирон|Мироша|m||благоухающий~fragrant
+Добрыня|Добря|m|l|добрый богатырь~kind hero
+Святогор|Свят|m|l|великан из былин~epic giant
+Ярослав|Ярик|m||славный силой~glorious strength
+Всеволод|Сева|m||владеющий всем~ruler of all
+Князь||m|l|князь~prince
+Боцман||m|m|боцман~boatswain
+Юнга||m|s|юный моряк~cabin boy
+Капитан|Кэп|m|ml|капитан~captain
+Дымок||m|m|дымок~wisp of smoke
+Георгий|Гоша|m||земледелец~farmer
+Жорж|Жорик|m|
+Иннокентий|Кеша|m||невинный~innocent
+Остап|Ося|m|
+Ерофей|Ероша|m|
+Ювентус|Юви|m||в честь футбольного клуба~after the football club
+Спартак|Спарти|m|l|в честь гладиатора~after the gladiator
+Лорд||m|ml|лорд~lord
+Рыжик||m|sm|рыжий~ginger
+Персик||m|s|персик~peach
+Пломбир||m|s|мороженое~ice cream
+Валенок||m|sm|валенок~felt boot
+Сугроб||m|l|сугроб~snowdrift
+Кедр||m|l|кедр~cedar
+Медведь|Мишка|m|l|медведь~bear
+Жучка||f|sm
+Найда||f|ml|найдёныш~foundling
+Белка||f|sm|как космическая собака~like the space dog
+Стрелка||f|sm|как космическая собака~like the space dog
+Ночка||f||ночь~little night
+Зорька||f||заря~dawn
+Вьюга||f|l|метель~snowstorm
+Метель||f|l|метель~blizzard
+Звёздочка|Звезда|f|s|звёздочка~little star
+Ласка||f|s|ласка~weasel, tenderness
+Маруся|Муся|f|
+Евдокия|Дуся|f|
+Глафира|Глаша|f|
+Ефросинья|Фрося|f||радость~joy
+Варвара|Варя|f|
+Василиса|Вася|f||царственная~royal
+Ульяна|Уля|f|
+Аграфена|Груня|f|
+Матрёна|Мотя|f||почтенная мать~matron
+Пелагея|Поля|f||морская~of the sea
+Капитолина|Капа|f|
+Есения|Еся|f||осенняя~autumnal
+Весна||f||весна~spring
+Ромашка||f|s|ромашка~chamomile
+Малинка||f|s|малина~raspberry
+Ягодка||f|s|ягодка~little berry
+Ириска||f|s|ириска~toffee
+Пышка||f|s|пышка~bun
+Плюшка||f|s|плюшка~sweet roll
+Тучка||f|sm|тучка~little cloud
+Снежана|Снежа|f||снежная~snowy
+Забава||f||забава~fun
+Любава|Люба|f||любимая~beloved
+Милана|Мила|f||милая~sweet
+Лада||f||богиня любви~goddess of love
+Рада||f||радость~joy
+Злата||f||золотая~golden
+Тайга||f|l|тайга~taiga
+Волга||f|l|река Волга~Volga river
+Пурга||f|l|пурга~blizzard
+Кнопка||f|s|кнопка~button
+Пуговка||f|s|пуговка~little button
+Белоснежка|Белка|f||белоснежная~snow-white
+Княжна||f|ml|княжна~princess
+Вишня||f|s|вишня~cherry
+Сказка||f||сказка~fairy tale
+Беда||f|ml|с юмором: «беда»~“trouble”, with humor`,
+
+en: `Maximilian|Max|m|
+Charles|Charlie|m|
+Cooper|Coop|m|
+Rocky||m|ml|rocky~rocky
+Buddy|Bud|m||приятель~buddy
+Duke||m|l|герцог~duke
+Bear||m|l|медведь~bear
+Tucker||m|
+Oliver|Ollie|m|
+Theodore|Teddy|m||дар Божий~gift of God
+Winston|Win|m|
+Benjamin|Benji|m|
+Archibald|Archie|m|
+Frederick|Freddie|m|
+Bartholomew|Barty|m|
+Sherlock|Locky|m||как сыщик~like the detective
+Hercules|Herc|m|l|герой-силач~strongman hero
+Thunder||m|l|гром~thunder
+Ranger||m|ml|рейнджер~ranger
+Scout||m|m|разведчик~scout
+Biscuit||m|s|печенье~biscuit
+Peanut||m|s|арахис~peanut
+Nugget||m|s|самородок~nugget
+Pickles||m|s|огурчики~pickles
+Waffles||m|s|вафли~waffles
+Murphy|Murph|m|
+Jasper||m|
+Finnegan|Finn|m|
+Sebastian|Bash|m|
+Alexander|Lex|m||защитник~defender
+Maverick|Mav|m|ml|бунтарь~maverick
+Gatsby||m|
+Atticus|Atti|m|
+Ziggy||m|s
+Bandit||m|m|бандит~bandit
+Diesel||m|l|дизель~diesel
+Tank||m|l|танк~tank
+Moose||m|l|лось~moose
+Chester|Chet|m|
+Rufus||m||рыжий~red-haired
+Baxter|Bax|m|
+Barnaby|Barney|m|
+Wellington|Welly|m|
+Humphrey|Humph|m|
+Reginald|Reggie|m|
+Montgomery|Monty|m|
+Rupert|Rupe|m|
+Bentley||m|
+Bella||f||красавица~beautiful
+Lucy||f||светлая~light
+Daisy||f||маргаритка~daisy
+Luna||f||луна~moon
+Molly||f|
+Penelope|Penny|f|
+Josephine|Josie|f|
+Margaret|Maggie|f||жемчужина~pearl
+Elizabeth|Lizzie|f|
+Rosalind|Rosie|f|
+Matilda|Tilly|f|
+Beatrice|Bea|f||приносящая радость~bringer of joy
+Clementine|Clemmie|f||милосердная~merciful
+Florence|Flo|f||цветущая~flourishing
+Winifred|Winnie|f|
+Harriet|Hattie|f|
+Gwendolyn|Gwen|f|
+Victoria|Vicky|f||победа~victory
+Pepper||f||перчинка~pepper
+Ginger||f||имбирь, рыжая~ginger
+Honey||f|s|мёд~honey
+Cookie||f|s|печенька~cookie
+Muffin||f|s|маффин~muffin
+Sadie||f|
+Willow||f||ива~willow
+Hazel||f||лесной орех~hazel
+Ruby||f||рубин~ruby
+Stella||f||звезда~star
+Ivy||f||плющ~ivy
+Duchess||f|l|герцогиня~duchess
+Storm||f|l|буря~storm
+Raven||f|ml|ворон~raven
+Maple||f||клён~maple
+Olive||f||олива~olive
+Poppy||f|s|мак~poppy`,
+
+de: `Bruno||m|ml|бурый~brown
+Fritz||m|
+Otto||m|
+Wolfgang|Wolfi|m|l|путь волка~wolf's path
+Siegfried|Siggi|m|l|мир победы~victory peace
+Friedrich|Fritzi|m||мирный правитель~peaceful ruler
+Rudolf|Rudi|m||славный волк~famous wolf
+Ludwig|Luddi|m||славный в битве~famous in battle
+Heinrich|Heini|m|
+Kaiser||m|l|император~emperor
+Blitz||m|m|молния~lightning
+Donner||m|l|гром~thunder
+Falk||m|l|сокол~falcon
+Arno||m||орёл~eagle
+Moritz|Mo|m|
+Konrad|Konni|m||смелый советчик~bold counsel
+Gustav|Gusti|m|
+Bernhard|Benno|m|l|сильный как медведь~bear-strong
+Hugo||m|
+Anton|Toni|m|
+Kuno||m|
+Leopold|Poldi|m||смелый народ~bold people
+Strudel||m|s|штрудель~strudel
+Brezel||m|s|крендель~pretzel
+Knopf||m|s|пуговка~button
+Würstchen|Wursti|m|s|сосиска~little sausage
+Schnaps||m|s|шнапс (с юмором)~schnapps (joke)
+Heidi||f|
+Greta||f||жемчужина~pearl
+Frieda||f||мир~peace
+Liesel||f|
+Mathilde|Tilda|f||сильная в бою~mighty in battle
+Gisela|Gisi|f|
+Brunhilde|Hilde|f|l|воительница~warrior maiden
+Krümel||f|s|крошка~crumb
+Charlotte|Lotte|f|
+Gretel||f|
+Wilhelmina|Mina|f|
+Adelheid|Adi|f||благородная~noble
+Kunigunde|Gundi|f|l|с юмором, «королевская битва»~royal battle, with humor
+Senta||f|l
+Asta||f|l
+Hexe||f||ведьмочка~little witch
+Blume||f|s|цветок~flower
+Sonne||f||солнце~sun
+Wolke||f||облако~cloud
+Schatzi||f|s|сокровище~sweetheart`,
+
+fr: `Gaston||m|
+Hugo||m|
+Louis|Lou|m|
+Napoléon|Napo|m|s|маленький император~little emperor
+Marcel||m|
+Pascal||m|
+Jacques|Jacquot|m|
+Antoine|Toine|m|
+Baptiste|Titou|m|
+Auguste|Guste|m||величественный~majestic
+Gustave|Gus|m|
+Bijou||m|s|драгоценность~jewel
+Filou||m|sm|плутишка~little rascal
+Loup||m|l|волк~wolf
+Roi||m|l|король~king
+Maxence|Max|m|
+Eugène|Gégène|m||благородный~well-born
+Achille||m|l
+Rémy||m|
+Croissant|Croissy|m|s|круассан~croissant
+Macaron||m|s|макарон~macaron
+Bordeaux||m|l|как вино и дог~like the wine and the mastiff
+Gaspard|Gaspi|m|
+Marius||m|
+Jules||m|
+Lucien|Lulu|m|
+Fifi||u|s
+Amélie|Mélie|f||трудолюбивая~hard-working
+Marguerite|Margot|f||маргаритка~daisy
+Joséphine|Fifine|f|
+Colette|Coco|f|
+Chérie||f|s|дорогая~darling
+Fleur||f||цветок~flower
+Belle||f||красавица~beauty
+Camille|Cami|f|
+Gabrielle|Gaby|f|
+Brigitte|Bibi|f|
+Mimi||f|s
+Praline||f|s|пралине~praline
+Vanille||f|s|ваниль~vanilla
+Noisette||f|s|орешек~hazelnut
+Madeleine|Mado|f|
+Céleste|Céleste|f||небесная~heavenly
+Étoile||f||звезда~star
+Duchesse||f|l|герцогиня~duchess
+Reine||f|l|королева~queen
+Clémence|Clem|f||милосердие~mercy
+Ninon||f|
+Babette||f|s
+Odette||f|`,
+
+es: `Francisco|Paco|m|
+José|Pepe|m|
+Rodrigo|Rodri|m|
+Alejandro|Jandro|m|
+Fernando|Nando|m|
+Ignacio|Nacho|m||огненный~fiery
+Guillermo|Memo|m|
+Eduardo|Lalo|m|
+Gonzalo|Gonza|m|
+Toro||m|l|бык~bull
+Lobo||m|l|волк~wolf
+Oso||m|l|медведь~bear
+Rayo||m|m|молния~lightning
+Trueno||m|l|гром~thunder
+Churro||m|s|чуррос~churro
+Taco||m|s|тако~taco
+Chispa||u|s|искра~spark
+Diego||m|
+Zorro||m|m|лис~fox
+Bandido||m|m|бандит~bandit
+Capitán|Capi|m|ml|капитан~captain
+Sancho||m|
+Quijote|Quijo|m|l|как Дон Кихот~like Don Quixote
+Bravo||m|ml|храбрый~brave
+Pirata||m|m|пират~pirate
+Canelo||m||коричный~cinnamon-colored
+Moreno||m||смуглый~dark-haired
+Dolores|Lola|f|
+Josefa|Pepa|f|
+Paloma||f||голубка~dove
+Estrella||f||звезда~star
+Rosario|Charo|f|
+Mercedes|Merche|f||милость~mercy
+Concepción|Conchi|f|
+Guadalupe|Lupe|f|
+Esperanza|Espe|f||надежда~hope
+Pilar|Pili|f||опора~pillar
+Margarita|Marga|f||маргаритка~daisy
+Sol||f||солнце~sun
+Nube||f||облако~cloud
+Canela||f||корица~cinnamon
+Pimienta||f|s|перчинка~pepper
+Chula||f|s|красотка~cutie
+Reina||f|l|королева~queen
+Frida||f|
+Valentina|Vale|f||сильная~strong
+Dulce||f|s|сладкая~sweet
+Mariposa|Mari|f|s|бабочка~butterfly
+Perla||f||жемчужина~pearl
+Tortilla|Torti|f|s|тортилья~tortilla`,
+
+it: `Giuseppe|Peppe|m|
+Francesco|Ciccio|m|
+Salvatore|Totò|m||спаситель~savior
+Vincenzo|Enzo|m||побеждающий~conquering
+Leonardo|Leo|m||храбрый лев~brave lion
+Lorenzo|Renzo|m|
+Federico|Fede|m|
+Massimo|Massi|m||величайший~the greatest
+Giovanni|Gianni|m|
+Alessandro|Sandro|m|
+Filippo|Pippo|m||любящий лошадей~lover of horses
+Juventus|Juvi|m||«юность», как клуб из Турина~“youth”, like the Turin club
+Milano|Milo|m||как город Милан~like the city of Milan
+Romeo||m|
+Dante||m||стойкий~enduring
+Cesare||m|l|цезарь~caesar
+Nerone|Nero|m|l|чёрный~black
+Augusto|Gusto|m|l|величественный~majestic
+Tiramisù|Tiri|m|s|тирамису~tiramisu
+Biscotto|Biscò|m|s|печенье~biscuit
+Gelato|Geli|m|s|мороженое~ice cream
+Fulmine||m|m|молния~lightning
+Lupo||m|l|волк~wolf
+Orso||m|l|медведь~bear
+Leone||m|l|лев~lion
+Bello||m||красавчик~handsome
+Fortunato|Tino|m||счастливчик~lucky
+Amerigo|Rigo|m|
+Cosimo|Cosi|m|
+Bianca||f||белая~white
+Chiara||f||ясная~clear
+Gioia||f||радость~joy
+Fortuna||f||удача~fortune
+Margherita|Ghita|f||маргаритка~daisy
+Francesca|Cesca|f|
+Giulietta|Giuli|f|
+Luce||f||свет~light
+Nuvola||f||облако~cloud
+Panna||f|s|сливки~cream
+Mozzarella|Mozzi|f|s|моцарелла~mozzarella
+Ambra||f||янтарь~amber
+Sofia|Sofi|f||мудрость~wisdom
+Vittoria|Vitti|f||победа~victory
+Isabella|Isa|f|
+Carlotta|Lotta|f|
+Allegra||f||весёлая~cheerful
+Dolce||f|s|сладкая~sweet
+Principessa|Prin|f|s|принцесса~princess
+Contessa|Tessa|f|l|графиня~countess`,
+
+ja: `Haru||m||весна~spring
+Kaito||m||море~ocean
+Ryu||m|l|дракон~dragon
+Takeshi|Take|m|l|воин~warrior
+Kenta|Ken|m||здоровый~healthy
+Hiroshi|Hiro|m||щедрый~generous
+Sora||u||небо~sky
+Tora||m|l|тигр~tiger
+Kuma||m|l|медведь~bear
+Kuro||m||чёрный~black
+Shiro||m||белый~white
+Kotaro|Kota|m|s|маленький мальчик~little boy
+Daichi||m|l|великая земля~great earth
+Raiden|Rai|m|l|гром и молния~thunder and lightning
+Mochi||u|s|рисовое пирожное~rice cake
+Dango||m|s|рисовые шарики~rice dumpling
+Tofu||m|s|тофу~tofu
+Sushi||u|s|суши~sushi
+Wasabi||u|s|васаби~wasabi
+Taro||m||старший сын~eldest son
+Hachi||m|ml|восемь, как Хатико~eight, like Hachikō
+Jiro||m||второй сын~second son
+Saburo|Sabu|m||третий сын~third son
+Yuki||u||снег~snow
+Kaze||m||ветер~wind
+Sakura||f||сакура~cherry blossom
+Hana||f||цветок~flower
+Yume||f||мечта~dream
+Momo||f|s|персик~peach
+Kiku||f||хризантема~chrysanthemum
+Aiko|Ai|f||дитя любви~child of love
+Mai||f||танец~dance
+Kohana|Koha|f|s|маленький цветок~little flower
+Hoshi||f||звезда~star
+Tsuki||f||луна~moon
+Nami||f||волна~wave
+Akira||u||яркий~bright
+Suzu||f|s|колокольчик~little bell
+Natsuki|Natsu|f||летняя луна~summer moon
+Kaede||f||клён~maple
+Mikan||f|s|мандарин~mandarin orange
+Azuki||f|s|красная фасоль~red bean
+Ume||f|s|слива~plum`,
+
+fi: `Karhu||m|l|медведь~bear
+Susi||m|l|волк~wolf
+Ukko||m|l|бог грома~thunder god
+Väinämöinen|Väinö|m|l|герой «Калевалы»~Kalevala hero
+Toivo||m||надежда~hope
+Onni||m||счастье~happiness
+Tuisku||m||вьюга~snow flurry
+Lumi||u||снег~snow
+Usva||u||туман~mist
+Kettu||m|m|лиса~fox
+Nalle||m|s|мишка~teddy bear
+Kuura||u||иней~hoarfrost
+Pihlaja||u||рябина~rowan
+Aino||f|
+Tähti||f||звезда~star
+Kukka||f|s|цветок~flower
+Säde||f||луч~ray
+Helmi||f||жемчужина~pearl
+Tuuli||f||ветер~wind
+Revontuli|Revo|u|l|северное сияние~northern lights`,
+
+ka: `Davit|Dato|m|
+Giorgi|Gogi|m|
+Lomi||m|l|лев~lion
+Mgeli||m|l|волк~wolf
+Kakhaber|Kakha|m|l
+Shota|Shoti|m|
+Tengiz|Tengo|m|l|море~sea
+Zurab|Zura|m|
+Nodar|Noda|m|
+Chacha||m|m|чача (с юмором)~chacha (joke)
+Khinkali|Khinki|m|s|хинкали~khinkali
+Churchkhela|Churchi|u|s|чурчхела~churchkhela
+Amirani|Amira|m|l|грузинский Прометей~Georgian Prometheus
+Tamar|Tamo|f||как царица Тамар~like Queen Tamar
+Nino|Nini|f|
+Mzia||f||солнечная~sunny
+Ketevan|Keto|f|
+Natela||f||светлая~bright
+Tsisana|Tsisi|f||небесная~heavenly
+Lali||f||рубин~ruby
+Manana|Mana|f|`,
+
+sw: `Simba||m|l|лев~lion
+Jabari||m|l|храбрый~brave
+Juma||m||рождённый в пятницу~born on Friday
+Baraka||m||благословение~blessing
+Tembo||m|l|слон~elephant
+Chui||m|l|леопард~leopard
+Duma||m|m|гепард~cheetah
+Kibo||m|l|вершина Килиманджаро~Kilimanjaro peak
+Jambo||m|s|привет~hello
+Hodari||m|l|сильный~strong
+Shujaa||m|l|герой~hero
+Kiboko||m|l|бегемот~hippo
+Nyota||f||звезда~star
+Zuri||f||красивая~beautiful
+Imani||f||вера~faith
+Amani||u||мир~peace
+Furaha||f||радость~joy
+Neema||f||благодать~grace
+Asali||f|s|мёд~honey
+Malaika||f||ангел~angel
+Kito||u|s|драгоценность~jewel
+Safari||u||путешествие~journey
+Upepo||u||ветер~wind`,
+
+haw: `Koa||m||смелый~brave
+Kai||m||море~sea
+Makoa||m|l|бесстрашный~fearless
+Kekoa||m|ml|храбрый воин~brave warrior
+Ikaika||m|l|сильный~strong
+Mano||m|l|акула~shark
+Iolani|Io|m||королевский ястреб~royal hawk
+Nalu||u||волна~wave
+Hoku||u||звезда~star
+Aloha||u||любовь, привет~love, hello
+Keala||u||путь~the path
+Malu||u|s|покой~calm
+Leilani|Lani|f||небесный цветок~heavenly flower
+Mahina||f||луна~moon
+Pua||f|s|цветок~flower
+Kiele||f||гардения~gardenia
+Nani||f||красивая~beautiful
+Lokelani|Loke|f|s|маленькая роза~little rose
+Ānuenue|Nue|f||радуга~rainbow`,
+
+ga: `Fionn|Finn|m||светлый~fair
+Oisín|Ossie|m|s|оленёнок~little deer
+Cormac|Cory|m|
+Ciarán|Kier|m||тёмный~dark one
+Darragh|Dar|m|l|дубовый~oak
+Séamus|Shay|m|
+Lorcan|Lorc|m|l|свирепый~fierce
+Conall|Con|m|l|сильный как волк~strong as a wolf
+Bran||m|l|ворон~raven
+Rónán|Ro|m||тюленёнок~little seal
+Tadhg|Tig|m||поэт~poet
+Faolán|Fao|m|l|волчонок~little wolf
+Aoife||f||красивая~beautiful
+Saoirse||f||свобода~freedom
+Niamh||f||сияющая~radiant
+Bríd|Bridie|f||сила~strength
+Róisín|Rosie|f|s|розочка~little rose
+Fiadh||f||дикая~wild
+Orla||f||золотая принцесса~golden princess
+Caoimhe|Keeva|f||нежная~gentle
+Ciara||f||тёмная~dark
+Sláinte|Slanty|u||«за здоровье!»~“cheers!”`,
+
+el: `Zeus||m|l|верховный бог~king of gods
+Apollo|Polo|m||бог света~god of light
+Hermes|Hermi|m|sm|вестник богов~messenger god
+Ares||m|l|бог войны~god of war
+Poseidon|Posi|m|l|бог морей~god of the sea
+Hades||m|l|бог подземного мира~god of the underworld
+Achilles|Achi|m|l|непобедимый герой~invincible hero
+Odysseus|Odi|m||хитроумный странник~cunning wanderer
+Perseus|Percy|m|
+Atlas||m|l|держит небо~holds up the sky
+Titan||m|l|титан~titan
+Argos||m|l|верный пёс Одиссея~Odysseus' loyal dog
+Kronos|Kroni|m|l|бог времени~god of time
+Orion||m|l|охотник~the hunter
+Pegasus|Peg|m||крылатый конь~winged horse
+Dionysus|Dion|m|
+Plato||m||философ~philosopher
+Socrates|Soki|m|s|философ (с юмором)~philosopher (joke)
+Athena|Thena|f||богиня мудрости~goddess of wisdom
+Artemis|Arti|f||богиня охоты~goddess of the hunt
+Hera||f|l|царица богов~queen of gods
+Aphrodite|Dita|f||богиня любви~goddess of love
+Persephone|Persi|f|
+Gaia||f|l|Земля~Earth
+Nike||f||победа~victory
+Iris||f||радуга~rainbow
+Selene|Leni|f||луна~moon
+Eos||f||заря~dawn
+Calliope|Callie|f||прекрасноголосая~beautiful-voiced
+Medusa|Medi|f||горгона (с юмором)~gorgon (joke)
+Pandora|Dora|f||всем одарённая~all-gifted
+Cassiopeia|Cassie|f||созвездие~constellation
+Andromeda|Andi|f||созвездие~constellation
+Daphne|Daffy|f||лавр~laurel`,
+
+no: `Odin||m|l|верховный бог~all-father
+Thor||m|l|бог грома~god of thunder
+Loki||m|sm|бог-хитрец~trickster god
+Freyr|Frey|m||бог плодородия~god of plenty
+Balder|Baldi|m||бог света~god of light
+Tyr||m|l|бог войны~god of war
+Bjørn|Bjö|m|l|медведь~bear
+Ulf||m|l|волк~wolf
+Sven||m|
+Leif||m||наследник~heir
+Ragnar|Ragi|m|l|воин-советник~warrior counsel
+Fenrir|Fen|m|l|исполинский волк~giant wolf
+Sleipnir|Sleip|m|l|конь Одина~Odin's horse
+Viking|Vik|m|l|викинг~viking
+Troll|Trolli|m|s|тролль (с юмором)~troll (joke)
+Gunnar|Gunni|m|l|воин~warrior
+Harald|Hal|m|
+Freya||f||богиня любви~goddess of love
+Frigg||f|l|царица Асгарда~queen of Asgard
+Saga||f||сказание~saga
+Sif||f||золотоволосая~golden-haired
+Astrid|Asta|f||божественная красота~divine beauty
+Ingrid|Inga|f|
+Sigrid|Siri|f||прекрасная победа~fair victory
+Valkyrie|Valka|f|l|валькирия~valkyrie
+Runa||f||тайна~secret lore
+Hekla||f|l|вулкан~volcano
+Embla||f||первая женщина~first woman
+Idun||f||юность~youth
+Skadi||f|l|богиня зимы~goddess of winter
+Liv||f|s|жизнь~life
+Solveig|Sol|f||солнечный путь~sun path`,
+
+tr: `Aslan||m|l|лев~lion
+Kurt||m|l|волк~wolf
+Bora||m||буря~storm
+Kaplan||m|l|тигр~tiger
+Karabaş||m|l|«черноголовый», классика для овчарок~“black-head”, classic shepherd name
+Boncuk||u|s|бусинка~bead
+Paşa||m|l|паша~pasha
+Sultan||m|l|султан~sultan
+Duman||m||дым~smoke
+Tarçın||u||корица~cinnamon
+Fıstık||u|s|фисташка~pistachio
+Lokum||u|s|лукум~Turkish delight
+Kahve||m||кофе~coffee
+Bulut||m||облако~cloud
+Cesur||m|ml|смелый~brave
+Pamuk||u|s|хлопок~cotton
+Mavi||u||голубой~blue
+Kara||m||чёрный~black
+Zeytin||u|s|оливка~olive
+Yıldız||f||звезда~star
+Aylin|Ay|f||лунный ореол~moon halo
+Şeker||f|s|сахар~sugar
+Gece||f||ночь~night
+Elif|Eli|f|
+Prenses|Pren|f|s|принцесса~princess`
+};
+
+// Пулы: эндоним, флаг
+const POOL_META = {
+  ru:{label:'Русский', flag:'🇷🇺', speech:'ru-RU'},
+  en:{label:'English', flag:'🇬🇧', speech:'en-GB'},
+  de:{label:'Deutsch', flag:'🇩🇪', speech:'de-DE'},
+  fr:{label:'Français', flag:'🇫🇷', speech:'fr-FR'},
+  es:{label:'Español', flag:'🇪🇸', speech:'es-ES'},
+  it:{label:'Italiano', flag:'🇮🇹', speech:'it-IT'},
+  ja:{label:'日本語', flag:'🇯🇵', speech:'ja-JP'},
+  fi:{label:'Suomi', flag:'🇫🇮', speech:'fi-FI'},
+  ka:{label:'ქართული', flag:'🇬🇪', speech:'ka-GE'},
+  sw:{label:'Kiswahili', flag:'🌍', speech:'sw-KE'},
+  haw:{label:'ʻŌlelo Hawaiʻi', flag:'🌺', speech:'en-US'},
+  ga:{label:'Gaeilge', flag:'🇮🇪', speech:'ga-IE'},
+  el:{label:'Μυθολογία', flag:'🏛️', speech:'en-GB'},
+  no:{label:'Norrøn', flag:'🛡️', speech:'nb-NO'},
+  tr:{label:'Türkçe', flag:'🇹🇷', speech:'tr-TR'}
+};
+
+// Породы: ru, en, размер, язык происхождения
+const BREEDS = [
+['Чихуахуа','Chihuahua','s','es'],['Русский той','Russian Toy','s','ru'],['Йоркширский терьер','Yorkshire Terrier','s','en'],
+['Померанский шпиц','Pomeranian','s','de'],['Мопс','Pug','s','en'],['Французский бульдог','French Bulldog','s','fr'],
+['Такса','Dachshund','s','de'],['Ши-тцу','Shih Tzu','s','en'],['Мальтезе','Maltese','s','it'],
+['Джек-рассел-терьер','Jack Russell Terrier','s','en'],['Папийон','Papillon','s','fr'],['Цвергшнауцер','Miniature Schnauzer','s','de'],
+['Той-пудель','Toy Poodle','s','fr'],['Кавалер-кинг-чарльз-спаниель','Cavalier King Charles Spaniel','s','en'],['Вельш-корги','Welsh Corgi','s','en'],
+['Бигль','Beagle','m','en'],['Сиба-ину','Shiba Inu','m','ja'],['Бордер-колли','Border Collie','m','en'],
+['Английский кокер-спаниель','English Cocker Spaniel','m','en'],['Австралийская овчарка','Australian Shepherd','m','en'],['Бультерьер','Bull Terrier','m','en'],
+['Американский стаффордширский терьер','American Staffordshire Terrier','m','en'],['Басенджи','Basenji','m','sw'],['Сибирский хаски','Siberian Husky','m','ru'],
+['Русский охотничий спаниель','Russian Spaniel','m','ru'],['Финский шпиц','Finnish Spitz','m','fi'],['Испанская водяная собака','Spanish Water Dog','m','es'],
+['Лаготто-романьоло','Lagotto Romagnolo','m','it'],['Ирландский терьер','Irish Terrier','m','ga'],['Самоед','Samoyed','m','ru'],
+['Норвежский элкхунд','Norwegian Elkhound','m','no'],['Ксолоитцкуинтли','Xoloitzcuintli','m','es'],
+['Далматин','Dalmatian','l','en'],['Лабрадор-ретривер','Labrador Retriever','l','en'],['Золотистый ретривер','Golden Retriever','l','en'],
+['Немецкая овчарка','German Shepherd','l','de'],['Доберман','Dobermann','l','de'],['Ротвейлер','Rottweiler','l','de'],
+['Боксёр','Boxer','l','de'],['Немецкий дог','Great Dane','l','de'],['Бернский зенненхунд','Bernese Mountain Dog','l','de'],
+['Акита-ину','Akita Inu','l','ja'],['Аляскинский маламут','Alaskan Malamute','l','en'],['Кане-корсо','Cane Corso','l','it'],
+['Неаполитанский мастиф','Neapolitan Mastiff','l','it'],['Ирландский волкодав','Irish Wolfhound','l','ga'],['Ирландский сеттер','Irish Setter','l','ga'],
+['Кавказская овчарка','Caucasian Shepherd','l','ka'],['Среднеазиатская овчарка (алабай)','Central Asian Shepherd','l','tr'],['Русская псовая борзая','Russian Borzoi','l','ru'],
+['Чёрный русский терьер','Black Russian Terrier','l','ru'],['Московская сторожевая','Moscow Watchdog','l','ru'],['Кангал','Kangal','l','tr'],
+['Дратхаар','German Wirehaired Pointer','l','de'],['Ньюфаундленд','Newfoundland','l','en'],['Сенбернар','St. Bernard','l','de'],
+['Пиренейская горная собака','Great Pyrenees','l','fr'],['Бордосский дог','Dogue de Bordeaux','l','fr'],['Сикоку','Shikoku','m','ja'],
+['Пудель (большой)','Standard Poodle','l','fr'],['Шарпей','Shar Pei','m','en'],['Ризеншнауцер','Giant Schnauzer','l','de']
+];
+
+</script>
+<script>
+(function(){
+'use strict';
+// ---------- i18n ----------
+const I18N = {
+ru:{tagline:'клички для собак на 15 языках',tabPick:'Подбор',tabFav:'Избранное',tabShort:'Сократить',tabSettings:'Настройки',
+hero:'Имя, на которое <em>захочется</em> откликаться',lead:'Укажите пол, размер и породу — подберём клички на вашем языке, а по желанию добавим экзотику. У каждой — полная и короткая форма.',
+gender:'Пол',any:'Любой',male:'Мальчик',female:'Девочка',size:'Размер',small:'Маленькая',medium:'Средняя',large:'Крупная',
+breed:'Порода',anyBreed:'Любая / метис',letter:'Первая буква',generate:'Подобрать',more:'Ещё варианты',pools:'Языки:',originChip:'родина породы',
+favTitle:'Избранное',copyAll:'Скопировать список',clearFav:'Очистить',emptyFav:'Пока пусто. Нажмите ♥ на понравившейся кличке.',
+emptyPick:'Нажмите «Подобрать» — и появятся первые варианты.',noResults:'Под эти фильтры имён нет. Уберите букву или включите экзотические имена.',
+shortTitle:'Полное → короткое',shortLead:'Впишите длинное имя — предложим ласковые сокращения для повседневного зова.',fullName:'Полное имя',fromDb:'из базы',
+uiLang:'Язык интерфейса',auto:'Автоматически',nameLang:'Язык кличек',nameLangHint:'По умолчанию — как язык интерфейса.',sameAsUi:'Как интерфейс',
+exotic:'Экзотические имена',exoticHint:'Добавлять клички из других языков. Выберите какие (если ни один — все).',
+origin:'Учитывать родину породы',originHint:'Для сиба-ину — японские имена, для овчарки — немецкие.',meanings:'Показывать значения',
+stats:'Ваша статистика',stGen:'показано',stLike:'в избранном',stRate:'like-rate',stCopy:'скопировано',
+copied:'Скопировано',short:'коротко',like:'В избранное',listen:'Произнести',copy:'Копировать',remove:'Убрать',
+sizeAuto:'Размер подставлен по породе',namesIn:'имён в базе',footer:'Pawnym · прототип'},
+en:{tagline:'dog names in 15 languages',tabPick:'Find',tabFav:'Favorites',tabShort:'Shorten',tabSettings:'Settings',
+hero:'A name your dog will <em>love</em> to answer to',lead:'Pick sex, size and breed — we suggest names in your language and, if you like, a dash of the exotic. Each comes with a full and a short form.',
+gender:'Sex',any:'Any',male:'Boy',female:'Girl',size:'Size',small:'Small',medium:'Medium',large:'Large',
+breed:'Breed',anyBreed:'Any / mixed',letter:'First letter',generate:'Find names',more:'More ideas',pools:'Languages:',originChip:'breed origin',
+favTitle:'Favorites',copyAll:'Copy list',clearFav:'Clear',emptyFav:'Nothing yet. Tap ♥ on a name you like.',
+emptyPick:'Tap “Find names” to see the first ideas.',noResults:'No names match. Remove the letter or turn on exotic names.',
+shortTitle:'Full → short',shortLead:'Type a long name and get cute short forms for everyday calling.',fullName:'Full name',fromDb:'from database',
+uiLang:'Interface language',auto:'Automatic',nameLang:'Name language',nameLangHint:'Defaults to the interface language.',sameAsUi:'Same as interface',
+exotic:'Exotic names',exoticHint:'Mix in names from other languages. Pick which (none = all).',
+origin:'Use breed origin',originHint:'Japanese names for a Shiba Inu, German for a Shepherd.',meanings:'Show meanings',
+stats:'Your stats',stGen:'shown',stLike:'favorited',stRate:'like-rate',stCopy:'copied',
+copied:'Copied',short:'short',like:'Favorite',listen:'Pronounce',copy:'Copy',remove:'Remove',
+sizeAuto:'Size set from breed',namesIn:'names in database',footer:'Pawnym · prototype'},
+de:{tagline:'Hundenamen in 15 Sprachen',tabPick:'Finden',tabFav:'Favoriten',tabShort:'Kürzen',tabSettings:'Einstellungen',
+hero:'Ein Name, auf den dein Hund <em>gern</em> hört',lead:'Geschlecht, Größe und Rasse wählen — wir schlagen Namen in deiner Sprache vor, auf Wunsch auch exotische. Jeweils mit Lang- und Kurzform.',
+gender:'Geschlecht',any:'Egal',male:'Rüde',female:'Hündin',size:'Größe',small:'Klein',medium:'Mittel',large:'Groß',
+breed:'Rasse',anyBreed:'Egal / Mischling',letter:'Anfangsbuchstabe',generate:'Namen finden',more:'Mehr Ideen',pools:'Sprachen:',originChip:'Herkunft der Rasse',
+favTitle:'Favoriten',copyAll:'Liste kopieren',clearFav:'Leeren',emptyFav:'Noch leer. Tippe ♥ bei einem Namen.',
+emptyPick:'Tippe auf „Namen finden“.',noResults:'Keine Treffer. Buchstaben entfernen oder exotische Namen aktivieren.',
+shortTitle:'Lang → kurz',shortLead:'Langen Namen eingeben und niedliche Kurzformen erhalten.',fullName:'Voller Name',fromDb:'aus der Datenbank',
+uiLang:'Sprache der Oberfläche',auto:'Automatisch',nameLang:'Sprache der Namen',nameLangHint:'Standard: wie die Oberfläche.',sameAsUi:'Wie Oberfläche',
+exotic:'Exotische Namen',exoticHint:'Namen aus anderen Sprachen beimischen (keine Auswahl = alle).',
+origin:'Herkunft der Rasse beachten',originHint:'Japanische Namen für Shiba Inu, deutsche für Schäferhunde.',meanings:'Bedeutungen zeigen',
+stats:'Deine Statistik',stGen:'gezeigt',stLike:'Favoriten',stRate:'Like-Rate',stCopy:'kopiert',
+copied:'Kopiert',short:'kurz',like:'Favorit',listen:'Aussprechen',copy:'Kopieren',remove:'Entfernen',
+sizeAuto:'Größe aus Rasse übernommen',namesIn:'Namen in der Datenbank',footer:'Pawnym · Prototyp'},
+es:{tagline:'nombres de perro en 15 idiomas',tabPick:'Buscar',tabFav:'Favoritos',tabShort:'Acortar',tabSettings:'Ajustes',
+hero:'Un nombre al que tu perro <em>querrá</em> responder',lead:'Elige sexo, tamaño y raza: te sugerimos nombres en tu idioma y, si quieres, algo exótico. Cada uno con forma larga y corta.',
+gender:'Sexo',any:'Cualquiera',male:'Macho',female:'Hembra',size:'Tamaño',small:'Pequeño',medium:'Mediano',large:'Grande',
+breed:'Raza',anyBreed:'Cualquiera / mestizo',letter:'Primera letra',generate:'Buscar nombres',more:'Más ideas',pools:'Idiomas:',originChip:'origen de la raza',
+favTitle:'Favoritos',copyAll:'Copiar lista',clearFav:'Vaciar',emptyFav:'Aún vacío. Pulsa ♥ en un nombre.',
+emptyPick:'Pulsa «Buscar nombres».',noResults:'Sin resultados. Quita la letra o activa nombres exóticos.',
+shortTitle:'Largo → corto',shortLead:'Escribe un nombre largo y obtén diminutivos para el día a día.',fullName:'Nombre completo',fromDb:'de la base',
+uiLang:'Idioma de la interfaz',auto:'Automático',nameLang:'Idioma de los nombres',nameLangHint:'Por defecto, el de la interfaz.',sameAsUi:'Como la interfaz',
+exotic:'Nombres exóticos',exoticHint:'Mezclar nombres de otros idiomas (ninguno = todos).',
+origin:'Tener en cuenta el origen',originHint:'Nombres japoneses para un Shiba Inu, alemanes para un Pastor.',meanings:'Mostrar significados',
+stats:'Tus estadísticas',stGen:'mostrados',stLike:'favoritos',stRate:'like-rate',stCopy:'copiados',
+copied:'Copiado',short:'corto',like:'Favorito',listen:'Pronunciar',copy:'Copiar',remove:'Quitar',
+sizeAuto:'Tamaño según la raza',namesIn:'nombres en la base',footer:'Pawnym · prototipo'},
+fr:{tagline:'noms de chien en 15 langues',tabPick:'Trouver',tabFav:'Favoris',tabShort:'Raccourcir',tabSettings:'Réglages',
+hero:'Un nom auquel votre chien <em>aimera</em> répondre',lead:'Choisissez le sexe, la taille et la race : nous proposons des noms dans votre langue, avec une touche d’exotisme si vous voulez. Chacun avec forme longue et courte.',
+gender:'Sexe',any:'Peu importe',male:'Mâle',female:'Femelle',size:'Taille',small:'Petit',medium:'Moyen',large:'Grand',
+breed:'Race',anyBreed:'Peu importe / croisé',letter:'Première lettre',generate:'Trouver des noms',more:'Plus d’idées',pools:'Langues :',originChip:'origine de la race',
+favTitle:'Favoris',copyAll:'Copier la liste',clearFav:'Vider',emptyFav:'Rien pour l’instant. Touchez ♥ sur un nom.',
+emptyPick:'Touchez « Trouver des noms ».',noResults:'Aucun nom. Retirez la lettre ou activez les noms exotiques.',
+shortTitle:'Long → court',shortLead:'Saisissez un nom long et obtenez des diminutifs pour tous les jours.',fullName:'Nom complet',fromDb:'de la base',
+uiLang:'Langue de l’interface',auto:'Automatique',nameLang:'Langue des noms',nameLangHint:'Par défaut, celle de l’interface.',sameAsUi:'Comme l’interface',
+exotic:'Noms exotiques',exoticHint:'Ajouter des noms d’autres langues (aucune = toutes).',
+origin:'Tenir compte de l’origine',originHint:'Noms japonais pour un Shiba Inu, allemands pour un Berger.',meanings:'Afficher les significations',
+stats:'Vos statistiques',stGen:'affichés',stLike:'favoris',stRate:'like-rate',stCopy:'copiés',
+copied:'Copié',short:'court',like:'Favori',listen:'Prononcer',copy:'Copier',remove:'Retirer',
+sizeAuto:'Taille selon la race',namesIn:'noms dans la base',footer:'Pawnym · prototype'},
+it:{tagline:'nomi per cani in 15 lingue',tabPick:'Cerca',tabFav:'Preferiti',tabShort:'Accorcia',tabSettings:'Impostazioni',
+hero:'Un nome a cui il tuo cane <em>amerà</em> rispondere',lead:'Scegli sesso, taglia e razza: suggeriamo nomi nella tua lingua e, se vuoi, un tocco esotico. Ognuno con forma lunga e corta.',
+gender:'Sesso',any:'Qualsiasi',male:'Maschio',female:'Femmina',size:'Taglia',small:'Piccola',medium:'Media',large:'Grande',
+breed:'Razza',anyBreed:'Qualsiasi / meticcio',letter:'Iniziale',generate:'Trova nomi',more:'Altre idee',pools:'Lingue:',originChip:'origine della razza',
+favTitle:'Preferiti',copyAll:'Copia elenco',clearFav:'Svuota',emptyFav:'Ancora vuoto. Tocca ♥ su un nome.',
+emptyPick:'Tocca «Trova nomi».',noResults:'Nessun nome. Togli la lettera o attiva i nomi esotici.',
+shortTitle:'Lungo → corto',shortLead:'Scrivi un nome lungo e ottieni vezzeggiativi per tutti i giorni.',fullName:'Nome completo',fromDb:'dal database',
+uiLang:'Lingua dell’interfaccia',auto:'Automatica',nameLang:'Lingua dei nomi',nameLangHint:'Predefinita: come l’interfaccia.',sameAsUi:'Come l’interfaccia',
+exotic:'Nomi esotici',exoticHint:'Aggiungi nomi da altre lingue (nessuna = tutte).',
+origin:'Considera l’origine della razza',originHint:'Nomi giapponesi per uno Shiba Inu, tedeschi per un Pastore.',meanings:'Mostra significati',
+stats:'Le tue statistiche',stGen:'mostrati',stLike:'preferiti',stRate:'like-rate',stCopy:'copiati',
+copied:'Copiato',short:'corto',like:'Preferito',listen:'Pronuncia',copy:'Copia',remove:'Rimuovi',
+sizeAuto:'Taglia dalla razza',namesIn:'nomi nel database',footer:'Pawnym · prototipo'}
+};
+const UI_LANGS = Object.keys(I18N);
+const UI_LABEL = {ru:'Русский',en:'English',de:'Deutsch',es:'Español',fr:'Français',it:'Italiano'};
+
+// ---------- storage ----------
+const store = {
+  get(k,d){try{const v=localStorage.getItem('pawnym:'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem('pawnym:'+k,JSON.stringify(v))}catch(e){}}
+};
+
+// ---------- data ----------
+const NAMES = []; const BY_POOL = {};
+for (const [pool, text] of Object.entries(NAME_POOLS)) {
+  BY_POOL[pool] = [];
+  text.split('\n').forEach((line, i) => {
+    line = line.trim(); if (!line) return;
+    const [full, short, g, sz, mean] = line.split('|');
+    const [mRu, mEn] = (mean || '').split('~');
+    const n = {id: pool + ':' + i, pool, full, short: short || full, g: g || 'u', sz: sz || '', mRu: mRu || '', mEn: mEn || mRu || ''};
+    NAMES.push(n); BY_POOL[pool].push(n);
+  });
+}
+const POOLS = Object.keys(POOL_META);
+
+// ---------- state ----------
+const browserLangs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']).map(l => l.toLowerCase().split('-')[0]);
+const ALIAS = {uk:'ru', be:'ru', kk:'ru', nb:'no', nn:'no', ca:'es', pt:'es'};
+function detect(list){ for (const l of browserLangs){ const x = ALIAS[l] || l; if (list.includes(x)) return x; } return null; }
+
+const S = Object.assign({
+  uiLang:'auto', nameLang:'auto', exotic:false, exoticPools:[], origin:true, meanings:true,
+  gender:'any', size:'any', breed:'', letter:''
+}, store.get('settings', {}));
+const stats = Object.assign({gen:0, like:0, copy:0, listen:0}, store.get('stats', {}));
+let favs = store.get('favs', []);
+const seen = new Set();
+let lastBatch = [];
+
+const ui = () => S.uiLang === 'auto' ? (detect(UI_LANGS) || 'en') : S.uiLang;
+const nameLang = () => S.nameLang !== 'auto' ? S.nameLang : (detect(POOLS) && S.uiLang === 'auto' ? detect(POOLS) : ui());
+const t = k => (I18N[ui()] || I18N.en)[k] || I18N.en[k] || k;
+const save = () => store.set('settings', S);
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// ---------- analytics (лёгкий трекер событий для продуктовых метрик) ----------
+function track(event, props){
+  const q = store.get('events', []); q.push({e:event, p:props||{}, ts:Date.now()});
+  if (q.length > 500) q.splice(0, q.length - 500);
+  store.set('events', q);
+}
+
+// ---------- i18n render ----------
+function applyI18n(){
+  document.documentElement.lang = ui();
+  document.querySelectorAll('[data-t]').forEach(el => {
+    if (el.hasAttribute('data-html')) el.innerHTML = t(el.dataset.t); else el.textContent = t(el.dataset.t);
+  });
+  $('#letter').placeholder = ui()==='ru' ? 'например, Б' : 'e.g. B';
+  $('#shortIn').placeholder = ui()==='ru' ? 'Ювентус, Бартоломей, Василиса…' : 'Juventus, Bartholomew, Clementine…';
+  $('#foot').textContent = `${t('footer')} · ${NAMES.length} ${t('namesIn')}`;
+  renderBreeds(); renderLangSelects(); renderPoolPick(); renderPoolsLine(); renderStats();
+  if (lastBatch.length) renderCards(lastBatch, false); else renderEmptyPick();
+  renderFavs(); renderShort();
+}
+
+function breedLabel(b){ return ui()==='ru' ? b[0] : b[1]; }
+function renderBreeds(){
+  const sel = $('#breed'); const groups = {s:t('small'), m:t('medium'), l:t('large')};
+  let html = `<option value="">${esc(t('anyBreed'))}</option>`;
+  for (const sz of ['s','m','l']) {
+    const list = BREEDS.map((b,i)=>[b,i]).filter(([b])=>b[2]===sz).sort((a,b)=>breedLabel(a[0]).localeCompare(breedLabel(b[0]), ui()));
+    html += `<optgroup label="${esc(groups[sz])}">` + list.map(([b,i]) => `<option value="${i}">${esc(breedLabel(b))}</option>`).join('') + '</optgroup>';
+  }
+  sel.innerHTML = html; sel.value = S.breed;
+}
+function renderLangSelects(){
+  $('#uiLang').innerHTML = `<option value="auto">${esc(t('auto'))} (${UI_LABEL[ui()]})</option>` + UI_LANGS.map(l=>`<option value="${l}">${UI_LABEL[l]}</option>`).join('');
+  $('#uiLang').value = S.uiLang;
+  $('#nameLang').innerHTML = `<option value="auto">${esc(t('auto'))} (${POOL_META[nameLang()].flag} ${POOL_META[nameLang()].label})</option>` +
+    POOLS.map(p=>`<option value="${p}">${POOL_META[p].flag} ${POOL_META[p].label} · ${BY_POOL[p].length}</option>`).join('');
+  $('#nameLang').value = S.nameLang;
+}
+function renderPoolPick(){
+  const main = nameLang();
+  $('#optExotic').checked = S.exotic; $('#optOrigin').checked = S.origin; $('#optMean').checked = S.meanings;
+  const box = $('#poolPick'); box.setAttribute('aria-disabled', String(!S.exotic));
+  box.innerHTML = POOLS.filter(p=>p!==main).map(p=>`<button data-p="${p}" aria-pressed="${S.exoticPools.includes(p)}">${POOL_META[p].flag} ${POOL_META[p].label}</button>`).join('');
+}
+function activePools(){
+  const main = nameLang(); const res = [{p:main, w:3, kind:'main'}];
+  const b = S.breed !== '' ? BREEDS[+S.breed] : null;
+  if (b && S.origin && b[3] !== main) res.push({p:b[3], w:2, kind:'origin'});
+  if (S.exotic) {
+    let ex = S.exoticPools.filter(p=>p!==main); if (!ex.length) ex = POOLS.filter(p=>p!==main);
+    ex.forEach(p => { if (!res.find(r=>r.p===p)) res.push({p, w: ex.length > 4 ? 0.35 : 1, kind:'exotic'}); });
+  }
+  return res;
+}
+function renderPoolsLine(){
+  const ap = activePools();
+  $('#poolsLine').innerHTML = `<span>${esc(t('pools'))}</span>` + ap.map(a =>
+    `<span class="chip ${a.kind==='main'?'main':a.kind==='origin'?'origin':''}" title="${a.kind==='origin'?esc(t('originChip')):''}">${POOL_META[a.p].flag} ${POOL_META[a.p].label}${a.kind==='origin'?' · '+esc(t('originChip')):''}</span>`).join('');
+}
+function renderStats(){
+  const rate = stats.gen ? Math.round(favs.length / stats.gen * 1000) / 10 : 0;
+  $('#stats').innerHTML = [[stats.gen,t('stGen')],[favs.length,t('stLike')],[rate+'%',t('stRate')],[stats.copy,t('stCopy')]]
+    .map(([v,l])=>`<div class="stat"><b>${v}</b><span>${esc(l)}</span></div>`).join('');
+  const fc = $('#favCount'); fc.hidden = !favs.length; fc.textContent = favs.length;
+}
+
+// ---------- filters UI ----------
+function bindSeg(id, key){
+  const el = $(id);
+  const sync = () => el.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === S[key])));
+  el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S[key] = b.dataset.v; save(); sync(); $('#genHint').textContent=''; });
+  sync(); return sync;
+}
+const syncSize = bindSeg('#segSize', 'size');
+bindSeg('#segGender', 'gender');
+$('#breed').addEventListener('change', e => {
+  S.breed = e.target.value;
+  if (S.breed !== '') { S.size = BREEDS[+S.breed][2]; syncSize(); $('#genHint').textContent = t('sizeAuto'); }
+  save(); renderPoolsLine(); track('breed_selected', {breed: S.breed});
+});
+$('#letter').value = S.letter;
+$('#letter').addEventListener('input', e => { S.letter = e.target.value.trim(); save(); });
+
+// ---------- generator ----------
+const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function fits(n){
+  if (S.gender !== 'any' && n.g !== 'u' && n.g !== S.gender) return false;
+  if (S.size !== 'any' && n.sz && !n.sz.includes(S.size)) return false;
+  if (S.letter) { const L = norm(S.letter); if (!norm(n.full).startsWith(L) && !norm(n.short).startsWith(L)) return false; }
+  return true;
+}
+function generate(count){
+  const ap = activePools();
+  const cands = ap.map(a => ({...a, list: BY_POOL[a.p].filter(fits)})).filter(a => a.list.length);
+  if (!cands.length) return [];
+  // если всё показано — начинаем круг заново
+  if (cands.every(a => a.list.every(n => seen.has(n.id)))) cands.forEach(a => a.list.forEach(n => seen.delete(n.id)));
+  const out = []; let guard = 0;
+  while (out.length < count && guard++ < 400) {
+    const pool = cands.filter(a => a.list.some(n => !seen.has(n.id)));
+    if (!pool.length) break;
+    const total = pool.reduce((s,a)=>s+a.w,0); let r = Math.random()*total, pick = pool[0];
+    for (const a of pool){ r -= a.w; if (r <= 0){ pick = a; break; } }
+    const free = pick.list.filter(n => !seen.has(n.id));
+    const n = free[Math.floor(Math.random()*free.length)];
+    seen.add(n.id); out.push(n);
+  }
+  return out;
+}
+function renderEmptyPick(){ $('#results').innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="big">🐕</div>${esc(t('emptyPick'))}</div>`; }
+
+const IC = {
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6a5 5 0 0 1 9.2 5c-2.2 4.6-9.2 9-9.2 9z"/></svg>',
+  heartF:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6a5 5 0 0 1 9.2 5c-2.2 4.6-9.2 9-9.2 9z"/></svg>',
+  speak:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>'
+};
+const isFav = id => favs.some(f => f.id === id);
+const meaning = n => ui()==='ru' ? n.mRu : n.mEn;
+const genderIcon = g => g==='m' ? '♂' : g==='f' ? '♀' : '⚥';
+
+function renderCards(list, animate=true){
+  const box = $('#results');
+  if (!list.length) { box.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="big">🤔</div>${esc(t('noResults'))}</div>`; return; }
+  box.innerHTML = list.map((n,i) => `
+    <article class="card" style="${animate?`animation-delay:${i*45}ms`:'animation:none'}">
+      <div class="name">${esc(n.full)}</div>
+      <div class="short">${n.short!==n.full ? `${esc(t('short'))}: <b>${esc(n.short)}</b>` : '&nbsp;'}</div>
+      ${S.meanings ? `<div class="mean">${esc(meaning(n))}</div>` : ''}
+      <div class="foot">
+        <div class="tags"><span class="chip">${POOL_META[n.pool].flag} ${POOL_META[n.pool].label}</span><span class="chip" title="${n.g}">${genderIcon(n.g)}</span></div>
+        <div class="icons">
+          <button class="icon" data-act="speak" data-id="${n.id}" aria-label="${esc(t('listen'))}" title="${esc(t('listen'))}">${IC.speak}</button>
+          <button class="icon" data-act="copy" data-id="${n.id}" aria-label="${esc(t('copy'))}" title="${esc(t('copy'))}">${IC.copy}</button>
+          <button class="icon ${isFav(n.id)?'liked':''}" data-act="like" data-id="${n.id}" aria-pressed="${isFav(n.id)}" aria-label="${esc(t('like'))}" title="${esc(t('like'))}">${isFav(n.id)?IC.heartF:IC.heart}</button>
+        </div>
+      </div>
+    </article>`).join('');
+}
+$('#btnGen').addEventListener('click', () => {
+  lastBatch = generate(6); stats.gen += lastBatch.length; store.set('stats', stats);
+  renderCards(lastBatch); renderStats();
+  $('#btnGen').querySelector('[data-t]').textContent = t('more'); $('#genHint').textContent = '';
+  track('names_generated', {count:lastBatch.length, gender:S.gender, size:S.size, breed:S.breed, lang:nameLang(), exotic:S.exotic});
+});
+
+// ---------- actions ----------
+const byId = id => NAMES.find(n => n.id === id);
+function toast(msg){ const el = $('#toast'); el.textContent = msg; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(()=>el.classList.remove('on'), 1600); }
+async function copyText(txt){
+  try { await navigator.clipboard.writeText(txt); }
+  catch(e){ const ta = document.createElement('textarea'); ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy')}catch(_){} ta.remove(); }
+  toast(t('copied') + ' ✓');
+}
+function speak(n){
+  try {
+    const u = new SpeechSynthesisUtterance(n.short !== n.full ? `${n.full}. ${n.short}!` : n.full);
+    u.lang = POOL_META[n.pool].speech; u.rate = .9; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    stats.listen++; store.set('stats', stats); track('name_pronounced', {id:n.id});
+  } catch(e){}
+}
+function toggleFav(n){
+  if (isFav(n.id)) { favs = favs.filter(f => f.id !== n.id); track('name_unliked', {id:n.id}); }
+  else { favs.unshift({id:n.id, ts:Date.now()}); stats.like++; track('name_liked', {id:n.id, pool:n.pool}); }
+  store.set('favs', favs); store.set('stats', stats); renderStats(); renderFavs();
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const n = byId(b.dataset.id); if (!n) return;
+  if (b.dataset.act === 'like') { toggleFav(n); const on = isFav(n.id); b.classList.toggle('liked', on); b.setAttribute('aria-pressed', on); b.innerHTML = on ? IC.heartF : IC.heart; }
+  if (b.dataset.act === 'copy') { copyText(n.short !== n.full ? `${n.full} (${n.short})` : n.full); stats.copy++; store.set('stats', stats); renderStats(); track('name_copied', {id:n.id}); }
+  if (b.dataset.act === 'speak') speak(n);
+});
+
+// ---------- favorites ----------
+function renderFavs(){
+  const list = favs.map(f => byId(f.id)).filter(Boolean);
+  $('#favList').innerHTML = list.length ? list.map(n => `
+    <div class="fav"><span style="font-size:22px">${POOL_META[n.pool].flag}</span>
+      <div class="grow"><div class="n">${esc(n.full)}</div><div class="s">${n.short!==n.full?esc(t('short'))+': '+esc(n.short)+' · ':''}${esc(meaning(n))}</div></div>
+      <button class="icon" data-act="speak" data-id="${n.id}" aria-label="${esc(t('listen'))}">${IC.speak}</button>
+      <button class="icon liked" data-act="like" data-id="${n.id}" aria-label="${esc(t('remove'))}">${IC.heartF}</button>
+    </div>`).join('') : `<div class="empty"><div class="big">♡</div>${esc(t('emptyFav'))}</div>`;
+  $('#btnCopyAll').disabled = $('#btnClearFav').disabled = !list.length;
+}
+$('#btnCopyAll').addEventListener('click', () => { const list = favs.map(f=>byId(f.id)).filter(Boolean); copyText(list.map(n => n.short!==n.full ? `${n.full} (${n.short})` : n.full).join('\n')); track('favorites_shared', {count:list.length}); });
+$('#btnClearFav').addEventListener('click', () => { favs = []; store.set('favs', favs); renderFavs(); renderStats(); if (lastBatch.length) renderCards(lastBatch, false); });
+
+// ---------- shortener ----------
+const VOW = 'аеёиоуыэюяaeiouyäöüéèêëàâîïôûœæøåıáíóúāēīōū';
+function shortForms(name){
+  const s = name.trim(); if (s.length < 3) return [];
+  const cyr = /[а-яё]/i.test(s); const low = s.toLowerCase();
+  const isV = ch => VOW.includes(ch);
+  let i = [...low].findIndex(isV); if (i < 0) i = 0;
+  let stem = s.slice(0, i+1);
+  if (low[i+1] && !isV(low[i+1])) stem = s.slice(0, i+2);
+  // хвост: последний слог (согласная + гласная + …)
+  let j = low.length - 1; while (j > 0 && !isV(low[j])) j--; const k = (j > 1 && !isV(low[j-1])) ? j-1 : j;
+  const tail = k > i+1 ? s.slice(k) : ''; const Tail = tail ? tail[0].toUpperCase() + tail.slice(1).toLowerCase() : '';
+  const stemL = stem.toLowerCase(); const St = stem[0].toUpperCase() + stemL.slice(1);
+  const endsV = isV(stemL[stemL.length-1]);
+  const out = cyr
+    ? [St+'и', St+'ик', St+'ся', St+(endsV?'ша':'уша'), St+'а', Tail && Tail.length>2 ? Tail+'ик' : '']
+    : [St+'y', St+'ie', St+'o', St+'s', St+'ster', Tail && Tail.length>2 ? Tail+'y' : ''];
+  return [...new Set(out.filter(x => x && norm(x) !== norm(s) && x.length >= 2))].slice(0, 7);
+}
+function renderShort(){
+  const v = $('#shortIn').value.trim(); const box = $('#shortOut');
+  if (!v) { box.innerHTML = ''; return; }
+  const hit = NAMES.filter(n => norm(n.full) === norm(v) && n.short !== n.full).map(n => n.short);
+  const forms = [...new Set([...hit, ...shortForms(v)])];
+  box.innerHTML = forms.map(f => `<button class="${hit.includes(f)?'db':''}" data-copy="${esc(f)}" title="${hit.includes(f)?esc(t('fromDb')):esc(t('copy'))}">${esc(f)}</button>`).join('');
+}
+$('#shortIn').addEventListener('input', renderShort);
+$('#shortIn').addEventListener('change', () => track('shortener_used', {}));
+$('#shortOut').addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy); });
+
+// ---------- settings ----------
+$('#uiLang').addEventListener('change', e => { S.uiLang = e.target.value; save(); lastBatch = []; seen.clear(); applyI18n(); track('settings_changed', {uiLang:S.uiLang}); });
+$('#nameLang').addEventListener('change', e => { S.nameLang = e.target.value; save(); seen.clear(); renderLangSelects(); renderPoolPick(); renderPoolsLine(); track('settings_changed', {nameLang:S.nameLang}); });
+$('#optExotic').addEventListener('change', e => { S.exotic = e.target.checked; save(); renderPoolPick(); renderPoolsLine(); track('settings_changed', {exotic:S.exotic}); });
+$('#optOrigin').addEventListener('change', e => { S.origin = e.target.checked; save(); renderPoolsLine(); });
+$('#optMean').addEventListener('change', e => { S.meanings = e.target.checked; save(); if (lastBatch.length) renderCards(lastBatch, false); });
+$('#poolPick').addEventListener('click', e => {
+  const b = e.target.closest('[data-p]'); if (!b) return; const p = b.dataset.p;
+  S.exoticPools = S.exoticPools.includes(p) ? S.exoticPools.filter(x=>x!==p) : [...S.exoticPools, p];
+  save(); b.setAttribute('aria-pressed', S.exoticPools.includes(p)); renderPoolsLine();
+});
+
+// ---------- tabs ----------
+function show(view){
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === view)));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === 'view-' + view));
+  store.set('tab', view); window.scrollTo({top:0});
+}
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { show(b.dataset.view); track('tab_opened', {tab:b.dataset.view}); }));
+
+// ---------- boot ----------
+applyI18n();
+show(store.get('tab', 'pick'));
+const first = !store.get('seenBefore', false);
+track(first ? 'first_open' : 'app_open', {ui:ui(), nameLang:nameLang()}); store.set('seenBefore', true);
+})();
+
+</script>
+</body>
+</html>
